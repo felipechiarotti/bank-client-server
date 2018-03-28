@@ -1,0 +1,24 @@
+﻿CREATE TABLE Clients(
+	ID_Client int,
+	FirstName varchar(20) NOT NULL,
+	LastName varchar(30) NOT NULL,
+	Address varchar(50) NOT NULL,
+	City varchar(20) NOT NULL,
+	Age int, 
+	CONSTRAINT PK_Clients PRIMARY KEY (ID_CLIENT)
+);
+
+CREATE TABLE Accounts(
+	ID_Account int,
+	Balance int,
+	Agency int,
+	Num int,
+	CONSTRAINT PK_Accounts PRIMARY KEY (ID_Account)
+);
+
+CREATE TABLE Account_Client(
+	ID_Account int,
+	ID_Client int,
+
+	CONSTRAINT PK_AccountClient PRIMARY KEY(ID_Account, ID_Client)
+);
