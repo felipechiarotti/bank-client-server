@@ -35,6 +35,8 @@ public class Server {
 		
 		connectedCount++;
 		System.out.println("[!] Conexão estabelecida com " + connection.getInetAddress().getHostName());
+		
+		
 		Thread t = new Thread(new ClientHandler(connection));
 		t.start();
 	}

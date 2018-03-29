@@ -1,5 +1,6 @@
 package clientserver.client;
 
+import java.awt.HeadlessException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,26 +10,38 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.JOptionPane;
+
 public class Client {
 	private String message = "";
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
 	private String chatServer;
 	private Socket client;
-	BufferedReader in;
 	
 	public Client(String host) {
 		chatServer = host;
-		this.in = new BufferedReader(new InputStreamReader(System.in));
 	}
 	
-	public void runClient() throws IOException {
+	public void runClient(String loginName) throws IOException {
 		connectToServer();
 		setStreams();
-		do {
-			this.message = in.readLine();
-			sendData();
-		}while(!this.message.equals("0"));
+		try {
+			if(logIn(loginName)) {
+			//INVOCAR CLIENTE
+				System.out.println("Logado com sucesso!");
+			}else {
+				JOptionPane.showMessageDialog(null, "Nome não encontrado", "ERRO AO LOGAR", 1);
+			}
+		} catch (HeadlessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		message = "0";
+		sendData();
 		this.client.close();
 	}
 
@@ -60,9 +73,15 @@ public class Client {
 		}
 	}
 	
-	private void sendData() throws IOException {
+	public void sendData() throws IOException {
 		output.writeObject(message);
 		output.flush();
+	}
+	
+	private boolean logIn(String loginName) throws ClassNotFoundException, IOException {
+		output.writeObject("LOGIN;"+loginName);
+		output.flush();
+		return (boolean) input.readObject();
 	}
 	
 }
