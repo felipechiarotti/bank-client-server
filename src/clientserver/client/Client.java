@@ -13,7 +13,6 @@ import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 
 public class Client {
-	private String message = "";
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
 	private String chatServer;
@@ -23,65 +22,50 @@ public class Client {
 		chatServer = host;
 	}
 	
-	public void runClient(String loginName) throws IOException {
+	public void runClient(String loginName) throws IOException{
 		connectToServer();
 		setStreams();
+		if(!logIn(loginName)) {
+			this.client.close();
+			throw new IOException();
+		}
+	}
+	public String receiveServerMessage() {
 		try {
-			if(logIn(loginName)) {
-			//INVOCAR CLIENTE
-				System.out.println("Logado com sucesso!");
-			}else {
-				JOptionPane.showMessageDialog(null, "Nome não encontrado", "ERRO AO LOGAR", 1);
-			}
-		} catch (HeadlessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return (String)input.readObject();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		message = "0";
-		sendData();
-		this.client.close();
-	}
-
-	private void connectToServer() {
-		try {
-			client = new Socket(chatServer, 12345);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Conectado ao servidor!");
+		return null;
 	}
 	
-	private void setStreams() {
-		try {
-			output = new ObjectOutputStream(client.getOutputStream());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			input = new ObjectInputStream(client.getInputStream());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	private void connectToServer() throws IOException {
+		client = new Socket(chatServer, 12345);
 	}
 	
-	public void sendData() throws IOException {
+	private void setStreams() throws IOException {
+		output = new ObjectOutputStream(client.getOutputStream());
+		input = new ObjectInputStream(client.getInputStream());
+	}
+	
+	public void sendData(String message) throws IOException {
 		output.writeObject(message);
 		output.flush();
 	}
 	
-	private boolean logIn(String loginName) throws ClassNotFoundException, IOException {
+	private boolean logIn(String loginName) throws IOException {
 		output.writeObject("LOGIN;"+loginName);
 		output.flush();
-		return (boolean) input.readObject();
+		try {
+			return (boolean) input.readObject();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 }
