@@ -9,12 +9,9 @@ public class RunServer {
 		Server server = new Server();
 		try {
 			server.runServer();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}catch(IOException ex) {
+			System.out.println("[!] Ocorreu um erro iniciar o servidor!");
+			ex.printStackTrace();
 		}
 	}
 }

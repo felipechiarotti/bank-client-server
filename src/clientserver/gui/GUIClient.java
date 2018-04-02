@@ -37,6 +37,10 @@ public class GUIClient {
 					tmp = "SAQUE;" + JOptionPane.showInputDialog("Insira o valor para sacar:");
 					try {
 						client.sendData(tmp);
+						if(client.receiveServerMessage().equals("false")) {
+							JOptionPane.showMessageDialog(null, "Saldo insuficiente para efetuar saque");
+						}
+						
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -48,7 +52,7 @@ public class GUIClient {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					JOptionPane.showMessageDialog(null, client.receiveServerMessage());
+					JOptionPane.showMessageDialog(null, "R$"+client.receiveServerMessage());
 				}
 
 
@@ -71,17 +75,7 @@ public class GUIClient {
 		 try {
 			client.runClient(clientName);
 			setFrame();
-			
-			
-			
-			
-			
-			
-			
-			
-			
 		} catch (IOException e) {
-			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Ocorreu um erro ao efetuar login!", "ERRO", 1);
 		}
 

@@ -17,7 +17,7 @@ public class Server {
 	private Socket connection;
 	private int connectedCount = 0;
 
-	public void runServer() throws SQLException, IOException {
+	public void runServer() throws IOException{
 			server = new ServerSocket(12345, 100);
 			while(true) {
 				waitForConnection();
@@ -26,22 +26,20 @@ public class Server {
 	
 	
 	private void waitForConnection() {
-		System.out.println("[!] Esperando a conexão de clientes...");
 		try {
+			
+			System.out.println("[!] Esperando a conexão de clientes...");
 			connection = server.accept();
+			connectedCount++;
+			System.out.println("[!] Conexão estabelecida com " + connection.getInetAddress().getHostName());			
+			Thread t = new Thread(new ClientHandler(connection));
+			t.start();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
+		}catch(SQLException sqlEx) {
+			sqlEx.printStackTrace();
 		}
 		
-		connectedCount++;
-		System.out.println("[!] Conexão estabelecida com " + connection.getInetAddress().getHostName());
-		
-		
-		Thread t = new Thread(new ClientHandler(connection));
-		t.start();
 	}
-	
-
-	
-	
 }

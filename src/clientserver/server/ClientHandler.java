@@ -20,34 +20,16 @@ public class ClientHandler implements Runnable{
 	private String message;
 	private String sessionAuth;
 	
-	public ClientHandler(Socket conn) {
+	public ClientHandler(Socket conn) throws SQLException, IOException {
 		this.connection = conn;
 		setStreams();
-
-		try {
-			stmt = 	(PgStatement) Database.getConnection().createStatement();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		stmt = 	(PgStatement) Database.getConnection().createStatement();
 	}
 
 
-	private void setStreams() {
-		try {
-			output = new ObjectOutputStream(connection.getOutputStream());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-			input = new ObjectInputStream(connection.getInputStream());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	private void setStreams() throws IOException {
+		output = new ObjectOutputStream(connection.getOutputStream());
+		input = new ObjectInputStream(connection.getInputStream());
 	}
 	
 	
@@ -66,11 +48,12 @@ public class ClientHandler implements Runnable{
 				}
 			}
 		}catch(IOException e) {
-			e.printStackTrace();
+			System.out.println("[!] Perda de conexão com cliente!");
 		} catch (ClassNotFoundException e1) {
 			e1.printStackTrace();
 		}finally {
 			try {
+				System.out.println("[!] Cliente Desconectado: "+connection.getInetAddress().getHostName());
 				this.connection.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -113,6 +96,9 @@ public class ClientHandler implements Runnable{
 				if(newValue > 0) {
 					sql = "UPDATE clients SET balance = balance - "+Integer.parseInt(op[1])+" WHERE name = '"+sessionAuth+"'";
 					stmt.executeUpdate(sql);
+					output.writeObject("true");
+				}else {
+					output.writeObject("false");
 				}
 			break;
 		}
