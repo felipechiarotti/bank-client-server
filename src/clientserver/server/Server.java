@@ -14,8 +14,6 @@ import clientserver.database.Database;
 
 public class Server {
 	private ServerSocket server;
-	private Socket connection;
-	private int connectedCount = 0;
 
 	public void runServer() throws IOException{
 			server = new ServerSocket(12345, 100);
@@ -27,10 +25,9 @@ public class Server {
 	
 	private void waitForConnection() {
 		try {
-			
+			Socket connection;
 			System.out.println("[!] Esperando a conexão de clientes...");
 			connection = server.accept();
-			connectedCount++;
 			System.out.println("[!] Conexão estabelecida com " + connection.getInetAddress().getHostName());			
 			Thread t = new Thread(new ClientHandler(connection));
 			t.start();

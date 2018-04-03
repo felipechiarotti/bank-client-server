@@ -14,12 +14,11 @@ import clientserver.client.Client;
 
 public class GUIClient {
 	String clientName;
-	Client client = new Client("127.0.0.1");
+	Client client = new Client("172.16.0.111");
 	JFrame frame;
 	JButton executeAction;
 	JComboBox actions;
 	String actionsList[] = {"Sacar", "Ver Saldo"};
-	
 	
 	
 	public void setFrame() {
